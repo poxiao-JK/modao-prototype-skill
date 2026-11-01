@@ -1,0 +1,2 @@
+[console_scripts]
+modao-prototype = cli:main

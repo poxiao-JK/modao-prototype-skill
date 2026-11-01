@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "modao-prototype"
+version = "0.1.0"
+description = "读取墨刀（MockingBot）原型分享链接：页面树层级、每页文字与设计标注、内容包围盒截图、离线HTML导出、批注提取"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{ name = "poxiao-JK" }]
+requires-python = ">=3.9"
+dependencies = ["playwright>=1.40"]
+keywords = ["modao", "mockingbot", "prototype", "playwright", "scraper", "qa"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Software Development :: Testing",
+  "Topic :: Software Development :: Quality Assurance",
+]
+
+[project.scripts]
+modao-prototype = "cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "scripts"}
+py-modules = ["cli", "modao_tree", "modao_export", "modao_page", "modao_shoot", "modao_notes", "modao_catalog"]
