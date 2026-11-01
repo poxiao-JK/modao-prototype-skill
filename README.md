@@ -1,4 +1,4 @@
-# modao-prototype
+# modao-prototype-skill
 
 读取与抓取墨刀（MockingBot / Modao）原型：给一个分享链接，产出完整本地档案——页面树（含分组层级）、每页文字与设计标注、整页概览截图、可离线打开的原型源文件、批注提取。
 
@@ -11,6 +11,12 @@
 - 📌 **批注提取**：原型上的批注便签逐页采集
 - 🔗 **分享链接**：`modao.cc/axbox/share/{id}` 已实测验证；`modao.cc/proto/{id}/sharing` 新格式为实验性支持（ID 可识别，抓取流程未在改格式下完整验证）
 - 🚫 **轻依赖**：仅 Python + Playwright（自管 Chromium），无需外部调试 Chrome 常驻
+
+## 安装
+
+```bash
+git clone https://github.com/poxiao-JK/modao-prototype-skill.git "%USERPROFILE%\.agents\skills\modao-prototype"
+```
 
 ## 存储位置（首次使用设置一次）
 
