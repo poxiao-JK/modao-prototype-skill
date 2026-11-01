@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """modao_export.py — 按页面清单导出离线HTML+资源（Playwright 版，纯 fetch 零交互）
-用法: python modao_export.py <墨刀分享链接> <tree.json> <离线HTML输出目录> [--all]
-默认只导出第一个根分支（当前版设计）；--all 导出全部页面。
+用法: python modao_export.py <墨刀分享链接> <tree.json> <离线HTML输出目录> [--roots <名,名>]
+导出 tree.json 列出的全部页面；--roots <逗号分隔根分支名> 可过滤指定根分支。
 """
 import sys, json, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -25,17 +25,22 @@ def resource_refs(html):
 
 
 def main():
-    args = [a for a in sys.argv[1:] if a != '--all']
-    export_all = '--all' in sys.argv
+    args = [a for a in sys.argv[1:] if not a.startswith('--roots')]
+    roots = None
+    ri = sys.argv.index('--roots') if '--roots' in sys.argv else -1
+    if ri >= 0:
+        roots = sys.argv[ri + 1]
     if len(args) < 3:
-        print('用法: python modao_export.py <墨刀分享链接> <tree.json> <离线HTML输出目录> [--all]')
+        print('用法: python modao_export.py <墨刀分享链接> <tree.json> <离线HTML输出目录> [--roots <名,名>]')
         sys.exit(2)
     share_url, tree_path, out_dir = args[0], args[1], args[2]
     out_dir = out_dir.replace('\\', '/').rstrip('/') + '/'
     tree = json.load(open(tree_path, encoding='utf-8'))
-    keep_root = tree[0]['rootFile'] if tree else None
-    pages = tree if export_all else [t for t in tree if t['rootFile'] == keep_root]
-    print(f"root: {keep_root} -> {len(pages)}/{len(tree)} pages")
+    pages = tree
+    if roots:
+        keep = roots.split(',')
+        pages = [t for t in tree if t.get('rootFile') in keep]
+    print(f"pages: {len(pages)}/{len(tree)}")
 
     # 资源缓存预扫描
     downloaded = set()

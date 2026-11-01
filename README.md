@@ -44,7 +44,7 @@ python scripts/modao_shoot.py  output/tree.json output/offline output/截图
 python scripts/modao_notes.py  output/tree.json output/notes.json
 ```
 
-- 默认只处理第一个根分支（正式设计）；`--all` 导出全部（含草稿/副本/调研分支）
+- `--roots <名,名>` 可过滤指定根分支；缺省导出全部
 - `modao_shoot.py` 默认不截图（正常页信息在文字里）；无文字页自动截图兜底；`--shots` 全量
 
 ## 产出结构
@@ -72,9 +72,8 @@ python scripts/modao_notes.py  output/tree.json output/notes.json
 
 ## 已知限制
 
-- 需要调试模式 Chrome（脚本只读页面，不模拟登录）
+- 需要调试模式 Chrome（仅 modao_notes.py 批注提取的 CDP 版需要；Playwright 主力脚本自管浏览器）
 - 原型播放器 UI 随墨刀版本变化可能需要适配（本项目的 DOM 选择器基于 2026-10 版本验证）
-- 原型内的「草稿」「竞品分析」等分组请自行按 tree.json 的层级判断取舍
 
 ## License
 

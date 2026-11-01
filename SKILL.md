@@ -38,8 +38,8 @@ description: 查看与抓取墨刀（MockingBot/Modao）原型：给一个墨刀
 # 1) 读页面树+层级，生成 tree.json（约 6 秒）
 python scripts/modao_tree.py "<墨刀分享链接>" "<项目目录>/tree.json"
 
-# 2) 导出离线HTML+资源（默认仅第一个根分支=正式设计；--all 含草稿/副本/调研分支）
-python scripts/modao_export.py "<墨刀分享链接>" "<项目目录>/tree.json" "<项目目录>/offline" [--all]
+# 2) 导出离线HTML+资源（tree.json 全部页面；--roots <名,名> 可过滤指定根分支）
+python scripts/modao_export.py "<墨刀分享链接>" "<项目目录>/tree.json" "<项目目录>/offline"
 
 # 3) 逐页读文字+标注+截图（默认不截正常页；无文字页自动强制截图兜底；--shots 全部截图）
 python scripts/modao_shoot.py "<项目目录>/tree.json" "<项目目录>/offline" "<项目目录>" [--shots]
@@ -67,7 +67,7 @@ python scripts/modao_notes.py "<墨刀分享链接>" "<项目目录>/tree.json" 
 - 需要某页文字与标注 → 读该页 `meta.json` 的 `text` 字段
 - 需要某页视觉 → 读该页 `overview.png`（若未生成，用 modao_page --shots 补）
 - 无文字的页面**自动强制截图**（纯图片页/空白页的视觉是唯一信息源，防止误判为空白）；有文字的页默认不截图（`--shots` 可全量）
-- 空白占位页如实标记 empty，列入「待设计补充」，**不编造内容**
+- 无有效内容的页面如实标记 empty，**不编造内容**
 
 ## 产出结构
 
@@ -85,7 +85,7 @@ python scripts/modao_notes.py "<墨刀分享链接>" "<项目目录>/tree.json" 
 
 - playwright 未安装：`pip install playwright && python -m playwright install chromium`（国内建议 `PLAYWRIGHT_DOWNLOAD_HOST=https://registry.npmmirror.com/-/binary/playwright`）
 - `未找到原型 iframe`：页面加载慢，重跑即可（本地操作可重试，结果幂等）
-- 某页文字与图片均为空：原型本身是空白占位页，如实报告「待设计补充」
+- 某页文字与图片均为空：该页在原型中无内容，如实报告
 - 资源下载 fail 4 个：装饰字体（sketchfonts），不影响内容
 - `ALREADY CACHED`：页面已下载过（--refresh 强制刷新）
 - MODAO_PROTOTYPE_HOME 未设置（新开终端）：setx 已持久化则重开终端即生效；未 setx 则按首次流程询问用户

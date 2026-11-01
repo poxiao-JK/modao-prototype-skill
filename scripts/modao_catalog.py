@@ -55,17 +55,10 @@ def buildCatalog(project, proj_dir):
         rf = t.get('rootFile')
         if rf and rf not in roots:
             roots.append(rf)
-    md += '\n## 根分支说明\n\n'
-    first_root = tree[0].get('rootFile') if tree else ''
+    md += '\n## 根分支\n\n'
     for rf in roots:
         cnt = sum(1 for t in tree if t.get('rootFile') == rf)
-        if rf == first_root:
-            hint = '当前版设计（分析基线）'
-        elif '_1' in rf:
-            hint = '旧版/副本分支（默认不采用，内容可能与当前版冲突）'
-        else:
-            hint = '调研/参考分支（默认不采用）'
-        md += '- ' + rf + '：' + str(cnt) + ' 页 — ' + hint + '\n'
+        md += '- ' + rf + '：' + str(cnt) + ' 页\n'
 
     catalog_path = os.path.join(proj_dir, 'catalog.md')
     with open(catalog_path, 'w', encoding='utf-8') as f:
