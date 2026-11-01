@@ -1,7 +1,0 @@
-cli
-modao_catalog
-modao_export
-modao_notes
-modao_page
-modao_shoot
-modao_tree
