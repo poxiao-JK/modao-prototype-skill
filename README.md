@@ -1,0 +1,75 @@
+# modao-prototype
+
+读取与抓取墨刀（MockingBot / Modao）原型：给一个分享链接，产出完整本地档案——页面树（含分组层级）、每页文字与设计标注、整页概览截图、可离线打开的原型源文件、批注提取。
+
+## 特性
+
+- 🌲 **完整页面树**：分组层级（如 `总览 > 策略信号渲染规则 > 横屏展示`）全部保留，不只是平铺列表
+- 📝 **文字与设计标注提取**：产品/设计写在原型上的说明文字（"不要均线"、"点击跳转XX页"）全部结构化输出——这是纯截图方案拿不到的核心信息
+- 🖼️ **整页概览截图（按需）**：视口自适应一图看全页；默认不生成以保速度，需要时单页 4 秒补截
+- 💾 **离线 HTML 存档**：页面源文件+资源本地化，双击即可还原原型，不依赖分享链接长期有效
+- 📌 **批注提取**：原型上的批注便签逐页采集
+- 🔗 **分享链接**：`modao.cc/axbox/share/{id}` 已实测验证；`modao.cc/proto/{id}/sharing` 新格式为实验性支持（ID 可识别，抓取流程未在改格式下完整验证）
+- 🚫 **轻依赖**：仅 Python + Playwright（自管 Chromium），无需外部调试 Chrome 常驻
+
+## 存储位置（首次使用设置一次）
+
+原型档案统一存放在 `MODAO_PROTOTYPE_HOME` 环境变量指向的目录（无默认值）：
+
+```bash
+setx MODAO_PROTOTYPE_HOME "C:\Users\<你>\.modao-prototype"
+```
+
+不同原型自动按项目隔离：`projects/{页面标题}-{项目ID}/`。
+
+## 快速开始
+
+```bash
+# 一次性准备
+pip install playwright -i https://pypi.tuna.tsinghua.edu.cn/simple
+python -m playwright install chromium
+
+# 抓取（三步）
+python scripts/modao_tree.py   "https://modao.cc/axbox/share/xxx?screen=yyy" output/tree.json
+python scripts/modao_export.py "https://modao.cc/axbox/share/xxx?screen=yyy" output/tree.json output/offline
+python scripts/modao_shoot.py  output/tree.json output/offline output/截图
+
+# 可选：批注提取
+python scripts/modao_notes.py  output/tree.json output/notes.json
+```
+
+- 默认只处理第一个根分支（正式设计）；`--all` 导出全部（含草稿/副本/调研分支）
+- `modao_shoot.py` 默认不截图（正常页信息在文字里）；无文字页自动截图兜底；`--shots` 全量
+
+## 产出结构
+
+见 [SKILL.md](SKILL.md) 的「产出结构」一节。
+
+## 工作原理
+
+1. 通过 CDP 连接调试 Chrome，attach 墨刀原型 iframe（Axure 播放器）
+2. 读取播放器 sitemap DOM：页面名 + 页面文件名 + 祖先分组链（完整层级）
+3. 逐页 `fetch` 页面 HTML 与资源（纯 HTTP，零 UI 交互），按相对路径本地化 → 离线包
+4. 本地打开每页离线 HTML：读 `innerText`（文字与标注）+ Emulation 自适应视口整页截图
+5. 视觉铁律：只以最终渲染截图为视觉参考（人眼所见），DOM 中隐藏图层/被遮挡资源一律不作为内容
+
+## 与其他方案对比
+
+| 能力 | 本项目 | modao 官方 proto-mcp | 社区抓取脚本 |
+|---|---|---|---|
+| 读取公开分享链接 | ✅ 新旧格式 | ❌ 仅生成/账号内项目 | ⚠️ 仅新格式 |
+| 文字与设计标注提取 | ✅ | ❌ | ❌ |
+| 分组层级树 | ✅ | — | ❌ 扁平 |
+| 离线 HTML 存档 | ✅ | ❌ | ❌ |
+| 批注提取 | ✅ | — | ✅ |
+| 依赖 | 零 npm 依赖 | npm | Puppeteer |
+
+## 已知限制
+
+- 需要调试模式 Chrome（脚本只读页面，不模拟登录）
+- 原型播放器 UI 随墨刀版本变化可能需要适配（本项目的 DOM 选择器基于 2026-10 版本验证）
+- 原型内的「草稿」「竞品分析」等分组请自行按 tree.json 的层级判断取舍
+
+## License
+
+MIT
